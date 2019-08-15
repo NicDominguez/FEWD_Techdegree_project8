@@ -11,6 +11,17 @@ h1 {
     font-size: 1.5em;
 }
 
+#overlay {
+    position: absolute;
+    top: -42px;
+    left: -42px;
+    width: 105vw;
+    height: 110vh;
+    z-index: 2;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: none;
+}
+
 #wrapper {
     margin-top: 30px;
     display: flex;
@@ -62,4 +73,19 @@ h1 {
 }
 .employee-city {
     margin: 0;
+}
+
+.more-info-wrapper {
+    display: none;
+}
+
+.focuscard {
+    position: fixed;
+    top: 30%;
+    left: 40%;
+    width: 300px;
+    height: 400px;
+    display: flex;
+    flex-flow: column nowrap;
+    z-index: 3;
 }
