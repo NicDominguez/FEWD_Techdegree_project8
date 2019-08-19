@@ -23,18 +23,18 @@ fetch('https://randomuser.me/api/?nat=us,gb&results=12')
 //---------------------------
 
 function generateHTML(data) {
-    data.results.forEach((employee, i) => {
+    data.results.forEach((employee) => {
         let card = document.createElement('DIV');
-        const largePicture = data.results[i].picture.large;
-        const firstName = data.results[i].name.first;
-        const lastName = data.results[i].name.last;
-        const email = data.results[i].email;
-        const city = data.results[i].location.city;
-        const phone = data.results[i].phone;
-        const street = data.results[i].location.street 
-        const state = data.results[i].location.state 
-        const postcode = data.results[i].location.postcode
-        const dob = data.results[i].dob.date.slice(0,10)
+        const largePicture = employee.picture.large;
+        const firstName = employee.name.first;
+        const lastName = employee.name.last;
+        const email = employee.email;
+        const city = employee.location.city;
+        const phone = employee.phone;
+        const street = employee.location.street 
+        const state = employee.location.state 
+        const postcode = employee.location.postcode
+        const dob = employee.dob.date.slice(0,10)
         const cleanDob = `${dob.slice(5,7)}/${dob.slice(8,10)}/${dob.slice(2,4)}`
         const cardHtml =
             `
