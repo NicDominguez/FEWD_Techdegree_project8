@@ -1,4 +1,11 @@
+
+//---------------------------
+// Global Variables
+//---------------------------
+
 const wrapper = document.getElementById('wrapper')
+const overlay = document.getElementById('overlay')
+const filter = document.getElementById('filter')
 
 
 
@@ -6,7 +13,7 @@ const wrapper = document.getElementById('wrapper')
 // FETCH FUNCTIONS
 //---------------------------
 
-fetch('https://randomuser.me/api/?results=12')
+fetch('https://randomuser.me/api/?nat=us,gb&results=12')
     .then(response => response.json())
     .then(data => generateHTML(data))
 
@@ -16,80 +23,114 @@ fetch('https://randomuser.me/api/?results=12')
 
 function generateHTML(data) {
     data.results.forEach((employee, i) => {
-        let card = document.createElement('DIV')
+        let card = document.createElement('DIV');
+        const largePicture = data.results[i].picture.large;
+        const firstName = data.results[i].name.first;
+        const lastName = data.results[i].name.last;
+        const email = data.results[i].email;
+        const city = data.results[i].location.city;
+        const phone = data.results[i].phone;
+        const street = data.results[i].location.street 
+        const state = data.results[i].location.state 
+        const postcode = data.results[i].location.postcode
+        const dob = data.results[i].dob.date.slice(0,10)
+        const cleanDob = `${dob.slice(5,7)}/${dob.slice(8,10)}/${dob.slice(2,4)}`
         const cardHtml =
             `
-        <div class="card">
             <div class="image-wrapper">
-                <img src="${data.results[i].picture.large}" alt="${data.results[i].name.first}">
+                <img src="${largePicture}" alt="${firstName}">
             </div>
             <div class="info-wrapper">
-                <p class="employee-name">${data.results[i].name.first} ${data.results[i].name.last}</p>
-                <p class="employee-email">${data.results[i].email}</p>
-                <p class="employee-city">${data.results[i].location.city}</p>
+                <p class="employee-name">${firstName} ${lastName}</p>
+                <p class="employee-email">${email}</p>
+                <p class="employee-city">${city}</p>
             </div>
             <div class="more-info-wrapper">
-                <p class="employee-phone">${data.results[i].phone}</p>
-                <p class="employee-address">${data.results[i].location.street} ${data.results[i].location.city} ${data.results[i].location.state} ${data.results[i].location.postcode}</p>
-                <p class="employee-dob">Birthday ${data.results[i].dob.date}</p>
+                <p class="employee-phone">${phone}</p>
+                <p class="employee-address">${street} ${city}, ${state} ${postcode}</p>
+                <p class="employee-dob">Birthday: ${cleanDob}</p>
             </div>
-        </div>
-        `;
+            `;
+        card.classList.add('card')
         card.innerHTML = cardHtml;
         wrapper.appendChild(card);
     })
 }
 
-
-
+function generateModalCard(cardForFocus) {
+    const modalCard = document.createElement('DIV')
+    const modalCardHTML = `
+        <div id="close-btn">X</div>
+        ${cardForFocus.innerHTML}`
+    const leftArrow = document.createElement('DIV')
+    const rightArrow = document.createElement('DIV')
+    overlay.appendChild(modalCard)
+    modalCard.innerHTML = modalCardHTML
+    modalCard.id = "modalcard";
+    modalCard.querySelector('.more-info-wrapper').style.display = 'block';
+    overlay.appendChild(leftArrow);
+    overlay.appendChild(rightArrow);
+    leftArrow.innerText = "<";
+    leftArrow.id = "left-arrow";
+    rightArrow.innerText = ">";
+    rightArrow.id = "right-arrow"  ;
+}
 
 //---------------------------
 // EVENT LISTENERS
 //---------------------------
 
-    //on click of card 
-        // show transparent overlay
-        // enlarge card by adding class
-        // show additional employee info
-        // add flip book arrows
-const overlay = document.getElementById('overlay')
-
-
 wrapper.addEventListener('click', (e) => {
     const cardForFocus = e.target.closest('.card');
-    const moreInfo = cardForFocus.querySelector('.more-info-wrapper');
-    if (e.target.classList.contains('card') ||
-        e.target.parentNode.classList.contains('card') ||
-        e.target.parentNode.parentNode.classList.contains('card') ||
-        e.target.parentNode.parentNode.parentNode.classList.contains('card')) 
-    
-        {   cardForFocus.classList.add('focuscard');
-            moreInfo.style.display = 'block';
-            overlay.style.display = 'block';
+    cardForFocus.id = 'focuscard';
+    generateModalCard(cardForFocus)
+    overlay.style.display = 'block';
+})
+
+overlay.addEventListener('click', (e) => {
+    let btn = e.target;
+    const focusCard = document.getElementById('focuscard')
+    const modalCard = document.getElementById("modalcard");
+    const previousCard = focusCard.previousElementSibling
+    const nextCard = focusCard.nextElementSibling
+
+    if (btn.id === 'close-btn') {
+        overlay.style.display = "none"
+        focusCard.removeAttribute('id')
+        modalCard.remove()
+    }
+    else if (btn.id === 'left-arrow' && previousCard !== null) {
+        focusCard.removeAttribute("id");
+        previousCard.id = "focuscard"
+        modalCard.remove()
+        generateModalCard(previousCard)
+    } else if (btn.id === 'right-arrow' && nextCard !== null) {
+        focusCard.removeAttribute("id");
+        nextCard.id = "focuscard"
+        modalCard.remove()
+        generateModalCard(nextCard)
+    }
+
+})
+
+filter.addEventListener('keyup', (e) => {
+    let filterText = filter.value.toLowerCase();
+    cardsNodeList = document.getElementsByClassName('card');
+    const cardsArray = Array.prototype.slice.call(document.getElementsByClassName('card'));
+    // show all cards again
+    cardsArray.forEach(card => card.style.display = 'flex')
+
+    // loop through first and last name
+    cardsArray.forEach(card => {
+        let name = card.children[1].children[0].innerText.toLowerCase();
+        if (name.includes(filterText) === false) {
+            card.style.display = 'none'
         }
+
+    })
+        
+
 })
 
 
 
-
-    //on click of closing x
-        // remove card class
-        // hide overlay
-
-    // on click of flip book arrow
-        // load next employee info
-        
-
-
-
-
-
-
-/* data to get:
-results.picture.thumbnail = picture
-results.name.first & results.name.last = name
-results.email = email
-results.location.city = city
-results.phone = phone#
-results.location.street & results.location.city & results.location.state & results.location.postcode = mailngaddress
-results.dob.date = birthday */
