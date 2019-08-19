@@ -16,6 +16,7 @@ const filter = document.getElementById('filter')
 fetch('https://randomuser.me/api/?nat=us,gb&results=12')
     .then(response => response.json())
     .then(data => generateHTML(data))
+    .catch(err => console.log(err));
 
 //---------------------------
 // HELPER FUNCTIONS
@@ -61,30 +62,28 @@ function generateModalCard(cardForFocus) {
     const modalCard = document.createElement('DIV')
     const modalCardHTML = `
         <div id="close-btn">X</div>
-        ${cardForFocus.innerHTML}`
-    const leftArrow = document.createElement('DIV')
-    const rightArrow = document.createElement('DIV')
+        ${cardForFocus.innerHTML}
+        <div id ="left-arrow" ><</div>
+        <div id="right-arrow">></div>`
     overlay.appendChild(modalCard)
     modalCard.innerHTML = modalCardHTML
     modalCard.id = "modalcard";
     modalCard.querySelector('.more-info-wrapper').style.display = 'block';
-    overlay.appendChild(leftArrow);
-    overlay.appendChild(rightArrow);
-    leftArrow.innerText = "<";
-    leftArrow.id = "left-arrow";
-    rightArrow.innerText = ">";
-    rightArrow.id = "right-arrow"  ;
 }
 
 //---------------------------
 // EVENT LISTENERS
 //---------------------------
 
-wrapper.addEventListener('click', (e) => {
-    const cardForFocus = e.target.closest('.card');
-    cardForFocus.id = 'focuscard';
-    generateModalCard(cardForFocus)
-    overlay.style.display = 'block';
+document.addEventListener("DOMContentLoaded", function() {
+
+    wrapper.addEventListener('click', (e) => {
+        const cardForFocus = e.target.closest('.card');
+        cardForFocus.id = 'focuscard';
+        generateModalCard(cardForFocus)
+        overlay.style.display = 'block';
+    })
+
 })
 
 overlay.addEventListener('click', (e) => {
@@ -129,7 +128,6 @@ filter.addEventListener('keyup', (e) => {
 
     })
         
-
 })
 
 
